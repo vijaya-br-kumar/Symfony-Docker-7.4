@@ -1,0 +1,63 @@
+version: '3.3'
+services:
+  mysql_docker:
+    image: mysql:5.7
+    container_name: mysql_apache
+    environment:
+      - MYSQL_ROOT_PASSWORD=root123
+    ports:
+      - "33060:3306"
+    volumes:
+      - ./data/db/mysql:/var/lib/mysql
+      - type: bind
+        source: ./mysql_dump
+        target: /docker-entrypoint-initdb.d/
+    networks:
+      symfony_net:
+        ipv4_address: 172.16.0.3
+
+  php_highlow:
+    image: wejoy2maro/symfony-php-7.4:latest
+    container_name: php_apache
+    volumes:
+      - type: bind
+        source: ./project
+        target: /var/www/html
+      - type: bind
+        source: ./php/php.ini
+        target: /usr/local/etc/php/php.ini
+      - type: bind
+        source: ./apache/apache-config.conf
+        target: /etc/apache2/sites-enabled/000-default.conf
+    links:
+      - mysql_docker
+    ports:
+      - "80:80"
+    networks:
+      symfony_net:
+        ipv4_address: 172.16.0.2
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_apache
+    links:
+      - mysql_docker
+    ports:
+      - 8181:80
+    environment:
+      PMA_HOST: mysql_docker
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: root123
+    networks:
+      symfony_net:
+        ipv4_address: 172.16.0.4
+
+networks:
+  symfony_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.0.0/24      
+
+  

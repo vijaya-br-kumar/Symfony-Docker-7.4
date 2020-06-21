@@ -1,0 +1,8 @@
+/data/*
+/project/*
+/mysql_dump/files/*
+/.idea/*
+
+!/data/.gitkeep
+!/project/.gitkeep
+!/mysql_dump/files/.gitkeep

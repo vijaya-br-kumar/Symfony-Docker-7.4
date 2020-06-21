@@ -1,0 +1,12 @@
+# To build the image from Docker file
+
+docker build -t <username>/<repo-name>:<tag> .
+
+# To commit the built image
+
+docker commit -m "<message>" <container-id> <username>/<repo-name>:<tag>
+
+# To push into docker hub
+
+docker push <username>/<repo-name>:<tag>
+
